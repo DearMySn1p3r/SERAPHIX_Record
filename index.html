@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SERAPHIX · PARTNER RECORD</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --ac:#1d4ed8; --ac-d:#1439a0; --ac-05:rgba(29,78,216,.05); --ac-10:rgba(29,78,216,.10);
+  --bg:#f5f6f8; --card:#fff; --ink:#101623; --ink2:#525b6b; --ink3:#9aa2b1;
+  --line:#e7e9ee; --line2:#f2f3f6;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:Pretendard,"Pretendard Variable",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+
+.top{position:sticky;top:0;z-index:30;background:rgba(245,246,248,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1120px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:10px}
+.mark{width:7px;height:7px;background:var(--ac);transition:background .25s}
+.title{font-weight:800;font-size:13px;letter-spacing:.24em}
+.sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink3);margin-left:auto}
+@media (max-width:560px){.sub{display:none}}
+
+.wrap{max-width:1120px;margin:0 auto;padding:24px 24px 90px;display:grid;grid-template-columns:372px minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.wrap{grid-template-columns:1fr;padding:16px 16px 70px;gap:16px}.stage{position:static !important}}
+.card{background:var(--card);border-radius:10px;box-shadow:0 1px 2px rgba(16,22,35,.04),0 8px 28px rgba(16,22,35,.05)}
+.blk{padding:22px 24px;border-bottom:1px solid var(--line2)}
+.blk:last-child{border-bottom:0}
+.blk-t{display:flex;align-items:baseline;justify-content:space-between;margin:0 0 14px;font-size:10.5px;font-weight:700;letter-spacing:.16em;color:var(--ink3);text-transform:uppercase;font-family:var(--mono)}
+.blk-t small{font-family:var(--sans);letter-spacing:0;text-transform:none;font-weight:500;font-size:10.5px;color:var(--ink3)}
+.blk-t .tag{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.1em;color:#fff;background:var(--ac);padding:2px 6px;border-radius:4px}
+
+.pick{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.pk{position:relative;cursor:pointer}
+.pk input{position:absolute;opacity:0;pointer-events:none}
+.pk i{display:block;font-style:normal;padding:11px 12px;border:1px solid var(--line);border-radius:8px;background:#fff;transition:.18s}
+.pk .c{display:block;font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--ink3);margin-bottom:3px}
+.pk .k{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--ink)}
+.pk .k::before{content:"";width:5px;height:5px;background:var(--rc);flex:0 0 auto}
+.pk:hover i{border-color:#d3d8e0}
+.pk input:checked+i{border-color:var(--rc);box-shadow:inset 0 0 0 1px var(--rc)}
+.pk input:focus-visible+i{outline:2px solid var(--ac);outline-offset:2px}
+
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+@media (max-width:420px){.gr{grid-template-columns:1fr}}
+.f{display:block;min-width:0;position:relative}
+.f.wide{grid-column:1/-1}
+.f>label{display:block;margin-bottom:5px;font-size:10.5px;font-weight:600;color:var(--ink2)}
+input[type=text],textarea,select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:7px;background:#fbfbfc;color:var(--ink);font:500 12.5px/1.55 var(--sans);transition:.18s;resize:none}
+input[type=text]:hover,textarea:hover,select:hover{border-color:#d3d8e0;background:#fff}
+input[type=text]:focus,textarea:focus,select:focus{outline:none;border-color:var(--ac);background:#fff;box-shadow:0 0 0 3px var(--ac-10)}
+select{padding:9px 28px 9px 11px;appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--ink3) 50%),linear-gradient(135deg,var(--ink3) 50%,transparent 50%);
+  background-position:calc(100% - 14px) 52%,calc(100% - 9px) 52%;background-size:5px 5px;background-repeat:no-repeat}
+.cnt{position:absolute;right:2px;top:0;font-family:var(--mono);font-size:9.5px;color:var(--ink3)}
+.idf input{padding-right:38px;font-family:var(--mono);letter-spacing:.04em}
+.idf .ico{position:absolute;right:5px;bottom:5px;width:28px;height:28px;border:0;border-radius:6px;background:transparent;cursor:pointer;color:var(--ink3);display:grid;place-items:center;transition:.15s}
+.idf .ico:hover{background:var(--ac-10);color:var(--ac)}
+.idf .ico svg{width:14px;height:14px}
+
+.blk details summary{list-style:none;cursor:pointer;outline:none;margin:0}
+.blk details summary::-webkit-details-marker{display:none}
+.blk details summary::after{content:"▾";margin-left:auto;font-size:9px;color:var(--ink3)}
+.blk details[open] summary::after{content:"▴"}
+.ooc{margin-top:12px;max-height:190px;overflow:auto;background:#fbfbfc;border:1px solid var(--line);border-radius:8px;
+  padding:11px 12px;font:500 11px/1.7 var(--sans);color:var(--ink2);white-space:pre-wrap;word-break:break-word;-webkit-user-select:all;user-select:all}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 9px;font:600 11px var(--sans);color:var(--ink3);cursor:pointer;transition:.15s}
+.chip:hover{border-color:var(--ac);color:var(--ac)}
+.chip.on{border-color:var(--ac);color:var(--ac);background:var(--ac-05)}
+
+.swatches{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sw{width:22px;height:22px;border-radius:5px;border:1px solid rgba(0,0,0,.08);cursor:pointer;padding:0;transition:.15s;position:relative}
+.sw:hover{transform:translateY(-1px)}
+.sw.on::after{content:"";position:absolute;inset:-4px;border:1.5px solid var(--sc);border-radius:8px}
+input[type=color]{width:28px;height:22px;padding:0;border:1px solid var(--line);border-radius:5px;background:none;cursor:pointer}
+
+.drop{border:1px dashed #ccd2dc;border-radius:8px;background:#fbfbfc;padding:14px 10px;text-align:center;cursor:pointer;transition:.18s}
+.drop:hover,.drop.over{border-color:var(--ac);background:var(--ac-05)}
+.drop b{display:block;font-size:11.5px;font-weight:700}
+.drop small{display:block;margin-top:2px;font-family:var(--mono);font-size:9px;color:var(--ink3)}
+.rr{display:flex;align-items:center;gap:10px;margin-top:10px}
+.rr>span:first-child{font-size:10.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--ac) var(--fill,0%),var(--line) var(--fill,0%));cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#fff;border:1.5px solid var(--ac);box-shadow:0 1px 3px rgba(0,0,0,.14)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#fff;border:1.5px solid var(--ac)}
+.val{font-family:var(--mono);font-size:10px;color:var(--ink3);min-width:46px;text-align:right}
+.xbtn{border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink2);font:600 10.5px var(--sans);padding:6px 9px;cursor:pointer;transition:.15s}
+.xbtn:hover{border-color:#d3d8e0}
+.stg{margin-top:10px;display:flex;align-items:center;gap:8px;font-size:11px;color:var(--ink2)}
+.stg b{font-size:12px}
+.stg .dot{width:8px;height:8px;border-radius:2px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink);font:700 12px var(--sans);cursor:pointer;transition:.18s}
+.btn.p{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn.p:hover{background:var(--ac-d);border-color:var(--ac-d)}
+.btn em{font-style:normal;font-family:var(--mono);font-size:9px;font-weight:500;opacity:.65;letter-spacing:.05em}
+
+.stage{position:sticky;top:74px}
+.stage-in{padding:24px}
+.hold{display:flex;justify-content:center;padding:22px;border-radius:8px;background:#eef0f4}
+#pv{display:block;width:100%;max-width:400px;height:auto;touch-action:none;
+  box-shadow:0 14px 30px -12px rgba(16,22,35,.30),0 2px 6px rgba(16,22,35,.10)}
+.hint{margin:14px 0 0;text-align:center;font-size:10.5px;color:var(--ink3);line-height:1.7}
+kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(--line);border-radius:3px;padding:1.5px 4px;color:var(--ink2)}
+.saves{display:grid;gap:8px;margin-top:16px}
+.dpi{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line2)}
+.dpi>span{font-size:10.5px;font-weight:600;color:var(--ink2);white-space:nowrap}
+.spec{margin-top:11px;display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;letter-spacing:.05em;color:var(--ink3)}
+.foot{max-width:1120px;margin:0 auto;padding:0 24px 40px;font-family:var(--mono);font-size:9.5px;color:var(--ink3);text-align:center}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="top-in">
+  <span class="mark"></span><span class="title">SERAPHIX</span>
+  <span class="sub">PARTNER RECORD · A5</span>
+</div></div>
+
+<div class="wrap">
+  <div class="card">
+    <div class="blk">
+      <details>
+        <summary class="blk-t">OOC <small>RP에서 값 뽑아오기</small></summary>
+        <div class="ooc" id="oocBox">*[OOC: 잠시 RP 중지. 지금까지의 서사와 두 사람의 관계를 근거로 파트너 기록지를 작성한다. 아래 항목만 출력하고 다른 말은 붙이지 않는다.
+
+· 코드네임 A / 직급 A
+· 코드네임 B / 직급 B
+· 동조율 __% (0~100 정수)
+· 편성 구분
+· 기록 항목
+· 비고 (120자 이내)
+· 인장 문구
+
+직급 — EXECUTOR PX-00 / ENFORCER PX-01 / RANGER PX-02 / RUNNER PX-03 / ROOKIE PX-04 / STABILIZER VX-01 중 택1
+편성 구분 — 전속 편성 / 임시 편성 / 합동 작전 / 비공식 중 택1
+기록 항목 — 합동 임무 이력 / 마력 공유 가능 / 동조 실패 이력 / 원거리 동조 / 상시 대기 편성 / 재심사 필요 중 해당하는 것만 나열
+인장 문구 — 영문·숫자 10자 이내
+동조율과 비고는 반드시 서사 속 행동·대사를 근거로 산출한다.
+
+출력은 div·span과 인라인 스타일만 쓴 HTML로 하고 전체를 백틱으로 감싼다. 바탕 #fcfbf8, 본문 #16181d, 라벨 #9b9a94, 괘선 #dedbd3의 종이 서식처럼 구성한다. 라벨은 작게 자간을 넓혀 쓰고 값은 굵게 대비를 준다. 동조율은 20칸 세그먼트 게이지로 표현하며 채운 칸은 #1d4ed8, 빈 칸은 #f4f2ec로 한다.]*</div>
+      </details>
+      <button class="btn s" id="oocCopy" type="button" style="margin-top:11px">OOC 프롬프트 복사</button>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Issuer <small>발급 기관</small></h2>
+      <div class="pick" id="orgs"></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t"><span>Partner <span class="tag">A</span></span></h2>
+      <div class="gr">
+        <div class="f"><label for="nameA">코드네임</label><input type="text" id="nameA" maxlength="14" placeholder="CODENAME" autocomplete="off"></div>
+        <div class="f"><label for="rankA">직급</label><select id="rankA"></select></div>
+      </div>
+      <div class="drop" id="dropA" style="margin-top:11px"><b>사진 A 업로드</b><small>클릭 · 드래그 · 붙여넣기</small></div>
+      <input type="file" id="fileA" accept="image/*" hidden>
+      <div class="rr"><span>확대</span><input type="range" id="zoomA" min="1" max="5" step="0.01" value="1"><span class="val" id="zoomAV">100%</span><button class="xbtn" id="clrA" type="button">제거</button></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t"><span>Partner <span class="tag">B</span></span></h2>
+      <div class="gr">
+        <div class="f"><label for="nameB">코드네임</label><input type="text" id="nameB" maxlength="14" placeholder="CODENAME" autocomplete="off"></div>
+        <div class="f"><label for="rankB">직급</label><select id="rankB"></select></div>
+      </div>
+      <div class="drop" id="dropB" style="margin-top:11px"><b>사진 B 업로드</b><small>클릭 · 드래그 · 붙여넣기</small></div>
+      <input type="file" id="fileB" accept="image/*" hidden>
+      <div class="rr"><span>확대</span><input type="range" id="zoomB" min="1" max="5" step="0.01" value="1"><span class="val" id="zoomBV">100%</span><button class="xbtn" id="clrB" type="button">제거</button></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Sync Rate <small>동조율</small></h2>
+      <div class="rr" style="margin-top:0"><span>동조율</span><input type="range" id="sync" min="0" max="100" step="1" value="78"><span class="val" id="syncV">78 %</span></div>
+      <div class="stg"><span class="dot" id="stgDot"></span><b id="stgName"></b><span id="stgDesc"></span></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Type <small>편성 구분</small></h2>
+      <div class="chips" id="typeChips"></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Record <small>중복 선택</small></h2>
+      <div class="chips" id="recChips"></div>
+      <div class="f wide" style="margin-top:12px"><label for="note">비고<span class="cnt" id="nCnt"></span></label>
+        <textarea id="note" rows="3" maxlength="120" autocomplete="off"></textarea></div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Document</h2>
+      <div class="gr">
+        <div class="f"><label for="seal">인장 문구</label><input type="text" id="seal" maxlength="10" autocomplete="off"></div>
+        <div class="f idf"><label for="docNo">문서번호</label>
+          <input type="text" id="docNo" maxlength="18" autocomplete="off">
+          <button class="ico" id="reroll" type="button" title="랜덤 재발급" aria-label="문서번호 랜덤 재발급">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.6-6.4"/><path d="M21 3v6h-6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="blk">
+      <h2 class="blk-t">Accent</h2>
+      <div class="swatches" id="swatches"></div>
+    </div>
+  </div>
+
+  <div class="stage">
+    <div class="card stage-in">
+      <div class="hold"><canvas id="pv" aria-label="파트너 기록지 미리보기"></canvas></div>
+      <p class="hint">사진칸을 <kbd>드래그</kbd>하여 이동 · <kbd>휠</kbd>로 확대 축소</p>
+      <div class="saves">
+        <button class="btn p" id="saveA" type="button">PNG 저장 <em>A5 148×210mm</em></button>
+      </div>
+      <div class="dpi">
+        <span>해상도</span>
+        <select id="dpi" style="width:auto;flex:1">
+          <option value="150">150 DPI</option>
+          <option value="300" selected>300 DPI (권장)</option>
+          <option value="600">600 DPI</option>
+        </select>
+      </div>
+      <div class="spec"><span>A5 · 148 × 210 mm</span><span id="sp2"></span></div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">모든 데이터 처리는 브라우저 내부에서만 안전하게 이루어집니다.</div>
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════
+   좌표 단위: mm · A5 148 × 210
+   ══════════════════════════════════════════════════════════ */
+const PW=148,PH=210,L=12,R=136;
+const SANS='Pretendard,"Pretendard Variable",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif';
+const MONO='ui-monospace,SFMono-Regular,Menlo,Consolas,"Courier New",monospace';
+
+const ORGS=[
+  {ko:'세라픽스',    en:'SERAPHIX',  sub:'PARTNER REGISTRY',  pre:'SX', c:'#1d4ed8'},
+  {ko:'이데올로기아', en:'IDEOLOGIA', sub:'UNION REGISTRY',    pre:'ID', c:'#0d9488'},
+  {ko:'엑시투스',    en:'EXITUS',    sub:'UNREGISTERED PAIR',  pre:'EX', c:'#b91c1c'},
+  {ko:'녹트라',      en:'NOCTHRA',   sub:'NATIONAL REGISTRY',  pre:'NC', c:'#1e3a8a'}
+];
+const RANKS=[
+  {code:'PX-00',en:'EXECUTOR'},{code:'PX-01',en:'ENFORCER'},{code:'PX-02',en:'RANGER'},
+  {code:'PX-03',en:'RUNNER'},{code:'PX-04',en:'ROOKIE'},{code:'VX-01',en:'STABILIZER'}
+];
+const TYPES=['전속 편성','임시 편성','합동 작전','비공식'];
+const RECS=['합동 임무 이력','마력 공유 가능','동조 실패 이력','원거리 동조','상시 대기 편성','재심사 필요'];
+const SWATCH=['#1d4ed8','#0284c7','#5b21b6','#0d9488','#b91c1c','#1f2937'];
+
+const GRADES=[
+  {n:'RANK S',ko:'완전 동조',d:'제한 없음 · 최우선 편성',c:'#0f9d58'},
+  {n:'RANK A',ko:'안정',d:'상시 합동 임무 가능',c:'#0284c7'},
+  {n:'RANK B',ko:'양호',d:'조건부 합동 임무 가능',c:'#7c3aed'},
+  {n:'RANK C',ko:'불안정',d:'단독 임무 권고 · 재조정',c:'#d97706'},
+  {n:'RANK D',ko:'부적합',d:'편성 불가 · 재심사 필요',c:'#b91c1c'}
+];
+const grade=v=>v>=90?0:v>=75?1:v>=55?2:v>=35?3:4;
+
+/* 사진칸 (3:4) */
+const BOX=[{x:12,y:50.4,w:22,h:29.3},{x:78,y:50.4,w:22,h:29.3}];
+
+const P={paper:'#fcfbf8',ink:'#16181d',inkM:'#5c5f68',inkL:'#9b9a94',rule:'#dedbd3',box:'#f4f2ec'};
+
+const S={
+  org:0, accent:'#1d4ed8', custom:false,
+  nameA:'CODENAME', rankA:1, nameB:'CODENAME', rankB:5,
+  sync:78, type:0, recs:[0,1], note:'',
+  seal:'SX-REG', docNo:'', seed:1,
+  ph:[{img:null,zoom:1,px:0,py:0},{img:null,zoom:1,px:0,py:0}]
+};
+
+const $=id=>document.getElementById(id);
+const cv=$('pv'), cx=cv.getContext('2d');
+
+function mix(hex,to,k){
+  const h=hex.replace('#',''),n=parseInt(h.length===3?h.split('').map(c=>c+c).join(''):h,16);
+  const m=(a,b)=>Math.round(a+(b-a)*k);
+  return `rgb(${m((n>>16)&255,to[0])},${m((n>>8)&255,to[1])},${m(n&255,to[2])})`;
+}
+const rgba=(hex,a)=>{const h=hex.replace('#',''),n=parseInt(h.length===3?h.split('').map(c=>c+c).join(''):h,16);
+  return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${a})`;};
+
+function mt(c,s,sp){let w=0;for(const ch of [...s])w+=c.measureText(ch).width;return w+sp*Math.max(0,[...s].length-1);}
+function T(c,txt,x,y,o){
+  if(txt===undefined||txt===null||txt==='')return 0;
+  const {size=3,weight=400,color='#000',sp=0,align='left',max=0,font=SANS}=o||{};
+  const set=s=>c.font=`${weight} ${s}px ${font}`;
+  set(size);
+  let s=size,p=sp,w=mt(c,txt,sp);
+  if(max&&w>max){const k=max/w;s=size*k;p=sp*k;set(s);w=mt(c,txt,p);}
+  c.fillStyle=color;c.textAlign='left';c.textBaseline='alphabetic';
+  let sx=align==='right'?x-w:align==='center'?x-w/2:x;
+  for(const ch of [...txt]){c.fillText(ch,sx,y);sx+=c.measureText(ch).width+p;}
+  return w;
+}
+function wrap(c,txt,maxW,size,weight,font){
+  c.font=`${weight} ${size}px ${font||SANS}`;
+  const out=[];let line='';
+  for(const ch of [...String(txt)]){
+    const t=line+ch;
+    if(mt(c,t,0)>maxW&&line){out.push(line);line=(ch===' ')?'':ch;}
+    else line=t;
+  }
+  if(line)out.push(line);
+  return out;
+}
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+function rnd(seed){let s=seed>>>0;return()=>{s=(s*1664525+1013904223)>>>0;return s/4294967296;};}
+function line(c,x1,y,x2,col,h){c.fillStyle=col;c.fillRect(x1,y,x2-x1,h||.2);}
+function bars(c,x1,x2,y,h,col,seed){
+  const Rn=rnd(seed);c.fillStyle=col;let x=x2;
+  while(x>x1){const bw=.16+Rn()*.4,gp=.18+Rn()*.3;x-=bw;if(x<x1)break;c.fillRect(x,y,bw,h);x-=gp;}
+}
+function lab(c,ko,en,x,y,max){
+  const w=T(c,ko,x,y,{size:2.1,weight:700,color:P.inkM,sp:.1,max:max});
+  if(en)T(c,en,x+w+1.6,y,{size:1.5,weight:600,color:P.inkL,sp:.4,font:MONO});
+  return w;
+}
+function field(c,x,y,w,val,size){
+  line(c,x,y+1.2,x+w,P.rule,.2);
+  T(c,val,x+.6,y,{size:size||2.9,weight:700,color:P.ink,sp:0,max:w-1.4});
+}
+
+/* ── 사진 클램프 ── */
+const cover=i=>{const b=BOX[i],p=S.ph[i];return p.img?Math.max(b.w/p.img.naturalWidth,b.h/p.img.naturalHeight):1;};
+const dsize=i=>{const p=S.ph[i],s=cover(i)*p.zoom;return{w:p.img.naturalWidth*s,h:p.img.naturalHeight*s};};
+function clampP(i){const p=S.ph[i];if(!p.img)return;const b=BOX[i],d=dsize(i);
+  p.px=Math.min(0,Math.max(b.w-d.w,p.px));p.py=Math.min(0,Math.max(b.h-d.h,p.py));}
+function centerP(i){const p=S.ph[i];if(!p.img)return;const b=BOX[i],d=dsize(i);
+  p.px=(b.w-d.w)/2;p.py=(b.h-d.h)*.34;clampP(i);}
+
+function photo(c,i){
+  const b=BOX[i],p=S.ph[i];
+  c.save();c.beginPath();c.rect(b.x,b.y,b.w,b.h);c.clip();
+  let ok=false;
+  if(p.img&&p.img.naturalWidth>0){
+    try{const d=dsize(i);c.drawImage(p.img,b.x+p.px,b.y+p.py,d.w,d.h);ok=true;}catch(e){ok=false;}
+  }
+  if(!ok){
+    c.fillStyle=P.box;c.fillRect(b.x,b.y,b.w,b.h);
+    c.strokeStyle=P.inkL;c.lineWidth=.3;c.globalAlpha=.5;
+    const cxp=b.x+b.w/2,cyp=b.y+b.h*.42;
+    c.beginPath();c.arc(cxp,cyp-1,2.1,0,Math.PI*2);c.stroke();
+    c.beginPath();c.arc(cxp,cyp+5.4,4,Math.PI,0);c.stroke();
+    c.globalAlpha=1;
+  }
+  c.restore();
+  c.strokeStyle=P.rule;c.lineWidth=.24;c.strokeRect(b.x,b.y,b.w,b.h);
+}
+
+/* ══════════════════════════════════════════
+   서식 렌더
+   ══════════════════════════════════════════ */
+function drawForm(c){
+  const A=S.accent,O=ORGS[S.org],g=GRADES[grade(S.sync)];
+
+  c.fillStyle=P.paper;c.fillRect(0,0,PW,PH);
+  c.fillStyle=A;c.fillRect(0,0,PW,1.6);
+
+  /* ── 헤더 ── */
+  T(c,O.en,L,12.4,{size:4.0,weight:800,color:P.ink,sp:.6,max:70});
+  T(c,O.sub,L,16.2,{size:1.5,weight:600,color:P.inkL,sp:.5,font:MONO,max:70});
+  T(c,'DOCUMENT NO.',R,11.0,{size:1.4,weight:600,color:P.inkL,sp:.4,align:'right',font:MONO});
+  T(c,S.docNo,R,15.6,{size:2.6,weight:700,color:P.ink,sp:.1,align:'right',font:MONO,max:56});
+  line(c,L,20.4,R,P.rule,.25);
+
+  /* ── 제목 + 구분 배지 ── */
+  T(c,'파트너 정보 기록지',L,30.4,{size:7.0,weight:800,color:P.ink,sp:-.1,max:88});
+  T(c,'PARTNER REGISTRATION RECORD',L,35.0,{size:1.7,weight:700,color:A,sp:.62,max:90});
+  c.font='700 2.0px '+SANS;
+  const tw=mt(c,TYPES[S.type],.2),bw=tw+4.0,bh=5.0,by=26.0;
+  rr(c,R-bw,by,bw,bh,.8);c.fillStyle=rgba(A,.09);c.fill();
+  c.strokeStyle=rgba(A,.4);c.lineWidth=.2;rr(c,R-bw+.1,by+.1,bw-.2,bh-.2,.8);c.stroke();
+  T(c,TYPES[S.type],R-2.0,by+3.15,{size:2.0,weight:700,color:A,sp:.2,align:'right'});
+  line(c,L,38.6,R,P.rule,.25);
+
+  /* ── 파트너 A / B ── */
+  const cw=(R-L-8)/2;
+  [['A',S.nameA,RANKS[S.rankA],0],['B',S.nameB,RANKS[S.rankB],1]].forEach(([tag,nm,rk,i])=>{
+    const x=L+i*(cw+8),b=BOX[i];
+    c.fillStyle=A;c.fillRect(x,43.4,4.4,4.4);
+    T(c,tag,x+2.2,46.9,{size:3.0,weight:800,color:'#fff',sp:0,align:'center'});
+    T(c,'PARTNER '+tag,x+6.6,46.9,{size:1.5,weight:700,color:P.inkL,sp:.5,font:MONO});
+    photo(c,i);
+    const ix=b.x+b.w+3.2,iw=x+cw-ix;
+    T(c,'CODE NAME',ix,55.4,{size:1.35,weight:600,color:P.inkL,sp:.4,font:MONO,max:iw});
+    T(c,nm,ix,59.6,{size:3.0,weight:800,color:P.ink,sp:-.02,max:iw});
+    line(c,ix,61.4,ix+iw,P.rule,.18);
+    T(c,'RANK',ix,66.6,{size:1.35,weight:600,color:P.inkL,sp:.4,font:MONO,max:iw});
+    T(c,rk.en,ix,70.6,{size:2.4,weight:700,color:A,sp:0,max:iw});
+    T(c,rk.code,ix,74.6,{size:2.0,weight:700,color:P.inkM,sp:.3,font:MONO,max:iw});
+  });
+  /* 중앙 연결 표식 */
+  const mx=L+cw+4;
+  c.strokeStyle=P.rule;c.lineWidth=.2;c.setLineDash([1,1.2]);
+  c.beginPath();c.moveTo(mx,44);c.lineTo(mx,79.7);c.stroke();c.setLineDash([]);
+  c.fillStyle=P.paper;c.beginPath();c.arc(mx,62,2.6,0,Math.PI*2);c.fill();
+  c.strokeStyle=A;c.lineWidth=.32;c.beginPath();c.arc(mx,62,2.6,0,Math.PI*2);c.stroke();
+  c.beginPath();c.moveTo(mx-1.1,60.9);c.lineTo(mx+1.1,63.1);c.moveTo(mx+1.1,60.9);c.lineTo(mx-1.1,63.1);
+  c.lineWidth=.34;c.stroke();
+  line(c,L,84.0,R,P.rule,.25);
+
+  /* ── 동조율 ── */
+  lab(c,'동조율','SYNCHRO RATE',L,90.4);
+  T(c,S.sync+'%',R,91.0,{size:4.4,weight:800,color:g.c,sp:-.1,align:'right'});
+  const gy=93.8,gh=6.4,n=20,gap=.62;
+  const sw=(R-L-gap*(n-1))/n;
+  const on=Math.round(S.sync/100*n);
+  for(let i=0;i<n;i++){c.fillStyle=i<on?g.c:P.box;c.fillRect(L+i*(sw+gap),gy,sw,gh);}
+  T(c,'0',L,103.8,{size:1.4,weight:600,color:P.inkL,sp:.2,font:MONO});
+  T(c,'50',PW/2,103.8,{size:1.4,weight:600,color:P.inkL,sp:.2,align:'center',font:MONO});
+  T(c,'100',R,103.8,{size:1.4,weight:600,color:P.inkL,sp:.2,align:'right',font:MONO});
+
+  rr(c,L,106.8,R-L,11.4,1.4);c.fillStyle=rgba(g.c,.08);c.fill();
+  c.strokeStyle=rgba(g.c,.35);c.lineWidth=.22;rr(c,L+.11,106.91,R-L-.22,11.18,1.4);c.stroke();
+  c.fillStyle=g.c;c.fillRect(L,106.8,1.4,11.4);
+  T(c,'동조 판정',L+4.6,111.6,{size:1.5,weight:700,color:P.inkL,sp:.4});
+  T(c,g.n+'  ·  '+g.ko,L+4.6,116.0,{size:3.2,weight:800,color:g.c,sp:.1});
+  T(c,g.d,R-3.4,115.4,{size:2.0,weight:600,color:P.inkM,sp:0,align:'right',max:62});
+
+  /* ── 기록 항목 ── */
+  lab(c,'기록 항목','RECORD',L,126.4);
+  const colW=(R-L)/2;
+  RECS.forEach((s,i)=>{
+    const x=L+(i%2)*colW,y=132.6+Math.floor(i/2)*6.4;
+    const on2=S.recs.indexOf(i)>=0;
+    c.strokeStyle=on2?A:P.rule;c.lineWidth=.24;
+    rr(c,x,y-2.7,3.2,3.2,.4);c.stroke();
+    if(on2){
+      c.strokeStyle=A;c.lineWidth=.55;
+      c.beginPath();c.moveTo(x+.8,y-1.2);c.lineTo(x+1.4,y-.5);c.lineTo(x+2.5,y-2.1);c.stroke();
+    }
+    T(c,s,x+4.4,y,{size:2.1,weight:on2?700:500,color:on2?P.ink:P.inkM,sp:0,max:colW-5.4});
+  });
+
+  /* ── 비고 ── */
+  T(c,'비고',L,157.0,{size:1.5,weight:700,color:P.inkL,sp:.4});
+  const nl=wrap(c,S.note,R-L-1.2,2.3,600).slice(0,4);
+  for(let i=0;i<4;i++){
+    const y=162.4+i*6.0;
+    line(c,L,y,R,P.rule,.18);
+    if(nl[i])T(c,nl[i],L+.8,y-1.4,{size:2.3,weight:600,color:P.ink,sp:0});
+  }
+  line(c,L,186.4,R,P.rule,.25);
+
+  /* 인장 */
+  const sx=R-10.4,sy=196.2,rad=8.2;
+  c.save();c.translate(sx,sy);c.rotate(-7*Math.PI/180);c.globalAlpha=.9;
+  c.strokeStyle=A;c.lineWidth=.62;c.beginPath();c.arc(0,0,rad,0,Math.PI*2);c.stroke();
+  c.lineWidth=.24;c.beginPath();c.arc(0,0,rad-1.5,0,Math.PI*2);c.stroke();
+  T(c,S.seal,0,.4,{size:2.4,weight:800,color:A,sp:.24,align:'center',max:rad*1.62,font:MONO});
+  T(c,'REGISTRY',0,3.8,{size:1.3,weight:700,color:A,sp:.24,align:'center',max:rad*1.6,font:MONO});
+  c.restore();
+
+  /* ── 하단 ── */
+  bars(c,L,L+32,PH-9.4,3.0,P.ink,S.seed);
+  T(c,O.en+' PARTNER RECORD  ·  '+S.docNo,L+34.5,PH-7.0,{size:1.4,weight:600,color:P.inkL,sp:.4,font:MONO,max:56});
+}
+
+function render(c,k){
+  c.setTransform(1,0,0,1,0,0);
+  c.clearRect(0,0,c.canvas.width,c.canvas.height);
+  c.scale(k,k);
+  try{drawForm(c);}catch(e){console.error('render',e);}
+  c.setTransform(1,0,0,1,0,0);
+}
+
+/* ══════════ 미리보기 ══════════ */
+let PK=3;
+function sizePv(){
+  const w=cv.clientWidth||400,dpr=Math.min(window.devicePixelRatio||1,2);
+  PK=(w/PW)*dpr*1.5;
+  cv.width=Math.round(PW*PK);cv.height=Math.round(PH*PK);
+  cv.style.height=(w*PH/PW)+'px';
+  draw();
+}
+const FIELDS=['nameA','nameB','note','seal','docNo'];
+function sync(){FIELDS.forEach(id=>{const el=$(id);if(!el)return;
+  S[id]=id==='note'?el.value.replace(/[\r\n\t]+/g,' '):el.value;});}
+const draw=()=>{sync();render(cx,PK);};
+
+/* ══════════ 사진 조작 (A/B 개별) ══════════ */
+const pts=new Map();let act=-1,drag=false,last=null,pinch=null;
+function hit(e){
+  const r=cv.getBoundingClientRect(),mm=PW/r.width;
+  const x=(e.clientX-r.left)*mm,y=(e.clientY-r.top)*mm;
+  for(let i=0;i<2;i++){const b=BOX[i];
+    if(x>=b.x-1&&x<=b.x+b.w+1&&y>=b.y-1&&y<=b.y+b.h+1)return i;}
+  return -1;
+}
+cv.addEventListener('pointerdown',e=>{
+  const i=hit(e);if(i<0||!S.ph[i].img)return;
+  act=i;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pts.size===1){drag=true;last={x:e.clientX,y:e.clientY};cv.setPointerCapture(e.pointerId);}
+  else if(pts.size===2){const[a,b]=[...pts.values()];drag=false;pinch={d:Math.hypot(a.x-b.x,a.y-b.y)||1,z:S.ph[i].zoom};}
+});
+cv.addEventListener('pointermove',e=>{
+  if(!pts.has(e.pointerId)||act<0)return;pts.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(pinch&&pts.size===2){const[a,b]=[...pts.values()];setZoom(act,pinch.z*(Math.hypot(a.x-b.x,a.y-b.y)/pinch.d),null);return;}
+  if(!drag)return;
+  const r=cv.getBoundingClientRect(),mm=PW/r.width,p=S.ph[act];
+  p.px+=(e.clientX-last.x)*mm;p.py+=(e.clientY-last.y)*mm;
+  last={x:e.clientX,y:e.clientY};clampP(act);draw();
+});
+function up(e){pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){drag=false;act=-1;}}
+cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',e=>{
+  const i=hit(e);if(i<0||!S.ph[i].img)return;e.preventDefault();
+  const r=cv.getBoundingClientRect(),mm=PW/r.width,b=BOX[i];
+  setZoom(i,S.ph[i].zoom*(e.deltaY<0?1.09:1/1.09),[(e.clientX-r.left)*mm-b.x,(e.clientY-r.top)*mm-b.y]);
+},{passive:false});
+function setZoom(i,z,anchor){
+  const p=S.ph[i];if(!p.img)return;
+  const b=BOX[i],nz=Math.min(5,Math.max(1,z)),a=anchor||[b.w/2,b.h/2],before=dsize(i);
+  const rx=(a[0]-p.px)/before.w,ry=(a[1]-p.py)/before.h;
+  p.zoom=nz;const after=dsize(i);
+  p.px=a[0]-rx*after.w;p.py=a[1]-ry*after.h;clampP(i);
+  const sl=$(i?'zoomB':'zoomA');sl.value=p.zoom;fill(sl);
+  $(i?'zoomBV':'zoomAV').textContent=Math.round(p.zoom*100)+'%';
+  draw();
+}
+
+/* ══════════ 이미지 입력 ══════════ */
+const urls=[null,null];
+function load(i,f){
+  if(!f||!/^image\//.test(f.type||''))return;
+  const url=URL.createObjectURL(f);
+  const im=new Image();
+  im.onload=async()=>{
+    try{if(im.decode)await im.decode();}catch(e){}
+    if(!im.naturalWidth){URL.revokeObjectURL(url);return;}
+    if(urls[i])URL.revokeObjectURL(urls[i]);
+    urls[i]=url;
+    const p=S.ph[i];p.img=im;p.zoom=1;
+    const sl=$(i?'zoomB':'zoomA');sl.value=1;fill(sl);
+    $(i?'zoomBV':'zoomAV').textContent='100%';
+    centerP(i);draw();
+  };
+  im.onerror=()=>URL.revokeObjectURL(url);
+  im.src=url;
+}
+[0,1].forEach(i=>{
+  const tag=i?'B':'A';
+  $('drop'+tag).onclick=()=>$('file'+tag).click();
+  $('file'+tag).onchange=e=>{const f=e.target.files&&e.target.files[0];load(i,f);e.target.value='';};
+  ['dragenter','dragover'].forEach(x=>$('drop'+tag).addEventListener(x,()=>$('drop'+tag).classList.add('over')));
+  ['dragleave','dragend','drop'].forEach(x=>$('drop'+tag).addEventListener(x,()=>$('drop'+tag).classList.remove('over')));
+  $('drop'+tag).addEventListener('drop',e=>{e.preventDefault();
+    const dt=e.dataTransfer;if(dt&&dt.files&&dt.files[0])load(i,dt.files[0]);});
+  $('zoom'+tag).oninput=e=>setZoom(i,+e.target.value,null);
+  $('clr'+tag).onclick=()=>{const p=S.ph[i];p.img=null;p.zoom=1;
+    const sl=$('zoom'+tag);sl.value=1;fill(sl);$('zoom'+tag+'V').textContent='100%';draw();};
+});
+/* 창 전역 드롭 차단 (페이지 이탈 방지) */
+window.addEventListener('dragover',e=>e.preventDefault(),false);
+window.addEventListener('drop',e=>{
+  e.preventDefault();
+  const dt=e.dataTransfer;if(!dt||!dt.files||!dt.files[0])return;
+  const i=hit(e);load(i>=0?i:(S.ph[0].img?1:0),dt.files[0]);
+},false);
+window.addEventListener('paste',e=>{
+  const items=e.clipboardData&&e.clipboardData.items;if(!items)return;
+  for(const it of items)if(it.type&&it.type.startsWith('image/')){
+    const f=it.getAsFile();if(f){load(S.ph[0].img?1:0,f);break;}}
+});
+
+/* ══════════ 선택 UI ══════════ */
+ORGS.forEach((o,i)=>{
+  const l=document.createElement('label');l.className='pk';l.style.setProperty('--rc',o.c);
+  l.innerHTML='<input type="radio" name="og" value="'+i+'"'+(i===S.org?' checked':'')+'>'+
+    '<i><span class="c">'+o.sub+'</span><span class="k">'+o.ko+'</span></i>';
+  l.querySelector('input').onchange=()=>{S.org=i;if(!S.docCustom)newId();draw();};
+  $('orgs').appendChild(l);
+});
+['rankA','rankB'].forEach((id,n)=>{
+  const sel=$(id);
+  RANKS.forEach((r,i)=>{
+    const o=document.createElement('option');o.value=i;o.textContent=r.en+' · '+r.code;
+    if(i===(n?S.rankB:S.rankA))o.selected=true;
+    sel.appendChild(o);
+  });
+  sel.onchange=()=>{if(n)S.rankB=+sel.value;else S.rankA=+sel.value;draw();};
+});
+const typeBox=$('typeChips');
+TYPES.forEach((t,i)=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;b.dataset.i=i;
+  b.onclick=()=>{S.type=i;markType();draw();};
+  typeBox.appendChild(b);
+});
+function markType(){[...typeBox.children].forEach(b=>b.classList.toggle('on',+b.dataset.i===S.type));}
+const recBox=$('recChips');
+RECS.forEach((s,i)=>{
+  const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=s;b.dataset.i=i;
+  b.onclick=()=>{const p=S.recs.indexOf(i);if(p>=0)S.recs.splice(p,1);else S.recs.push(i);markRec();draw();};
+  recBox.appendChild(b);
+});
+function markRec(){[...recBox.children].forEach(b=>b.classList.toggle('on',S.recs.indexOf(+b.dataset.i)>=0));}
+
+const swBox=$('swatches');
+SWATCH.forEach(col=>{
+  const b=document.createElement('button');b.type='button';b.className='sw';
+  b.style.background=col;b.style.setProperty('--sc',col);b.dataset.col=col;b.title=col;
+  b.onclick=()=>{S.accent=col;S.custom=true;pick.value=col;markSwatch();accentCSS();draw();};
+  swBox.appendChild(b);
+});
+const pick=document.createElement('input');
+pick.type='color';pick.id='pick';pick.value=S.accent;pick.title='직접 선택';
+pick.oninput=()=>{S.accent=pick.value;S.custom=true;markSwatch();accentCSS();draw();};
+swBox.appendChild(pick);
+function markSwatch(){[...swBox.querySelectorAll('.sw')].forEach(b=>b.classList.toggle('on',S.custom&&b.dataset.col.toLowerCase()===S.accent.toLowerCase()));}
+function accentCSS(){
+  const r=document.documentElement.style;
+  r.setProperty('--ac',S.accent);r.setProperty('--ac-d',mix(S.accent,[0,0,0],.28));
+  r.setProperty('--ac-10',rgba(S.accent,.10));r.setProperty('--ac-05',rgba(S.accent,.05));
+}
+
+/* ══════════ 폼 ══════════ */
+FIELDS.forEach(id=>{
+  const el=$(id);el.value=S[id];
+  ['input','change','compositionend'].forEach(ev=>el.addEventListener(ev,()=>{
+    if(id==='docNo')S.docCustom=true;
+    counts();draw();
+  }));
+});
+$('note').addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
+function counts(){$('nCnt').textContent=($('note').value||'').length+' / 120';}
+$('sync').oninput=e=>{
+  S.sync=+e.target.value;$('syncV').textContent=e.target.value+' %';
+  fill(e.target);gradeUI();draw();
+};
+function gradeUI(){
+  const g=GRADES[grade(S.sync)];
+  $('stgDot').style.background=g.c;
+  $('stgName').textContent=g.n+' · '+g.ko;
+  $('stgName').style.color=g.c;
+  $('stgDesc').textContent=g.d;
+}
+function fill(el){el.style.setProperty('--fill',(el.value-el.min)/(el.max-el.min)*100+'%');}
+[$('sync'),$('zoomA'),$('zoomB')].forEach(fill);
+
+function newId(){
+  const D='0123456789',A='ABCDEFGHJKLMNPQRSTUVWXYZ';
+  const r=(s,n)=>Array.from({length:n},()=>s[Math.floor(Math.random()*s.length)]).join('');
+  S.docNo=ORGS[S.org].pre+'-PR-'+r(D,4)+r(A,1);
+  S.seed=(Math.random()*4294967295)>>>0;$('docNo').value=S.docNo;
+}
+$('reroll').onclick=()=>{S.docCustom=false;newId();draw();};
+
+/* ══════════ OOC 복사 ══════════ */
+$('oocCopy').onclick=async()=>{
+  const btn=$('oocCopy'),txt=($('oocBox').textContent||'').trim();
+  let ok=false;
+  try{ await navigator.clipboard.writeText(txt); ok=true; }
+  catch(e){
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=txt;ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,txt.length);
+      ok=document.execCommand('copy');ta.remove();
+    }catch(e2){ok=false;}
+  }
+  const prev=btn.textContent;
+  btn.textContent=ok?'복사되었습니다':'복사 실패 · 직접 선택해 주세요';
+  btn.style.color=ok?'var(--ac)':'';
+  setTimeout(()=>{btn.textContent=prev;btn.style.color='';},1700);
+};
+
+/* ══════════ 저장 ══════════ */
+const safe=s=>((s||'FORM').replace(/[^\w가-힣.-]+/g,'_').replace(/^_+|_+$/g,'')||'FORM');
+function save(){
+  sync();
+  const dpi=+$('dpi').value,k=dpi/25.4;
+  const c=document.createElement('canvas');
+  c.width=Math.round(PW*k);c.height=Math.round(PH*k);
+  const x=c.getContext('2d');x.imageSmoothingQuality='high';
+  render(x,k);
+  c.toBlob(bl=>{
+    const a=document.createElement('a');a.href=URL.createObjectURL(bl);
+    a.download='SERAPHIX_PARTNER_'+safe(S.nameA)+'_'+safe(S.nameB)+'_'+dpi+'dpi.png';
+    document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  },'image/png');
+}
+$('saveA').onclick=save;
+$('dpi').onchange=()=>{
+  const k=(+$('dpi').value)/25.4;
+  $('sp2').textContent='PNG '+Math.round(PW*k)+' × '+Math.round(PH*k)+' px';
+};
+
+newId();accentCSS();markSwatch();markType();markRec();counts();gradeUI();$('dpi').onchange();
+window.addEventListener('resize',sizePv);sizePv();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
+</script>
+</body>
+</html>
