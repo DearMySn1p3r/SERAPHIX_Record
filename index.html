@@ -136,23 +136,29 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
     <div class="blk">
       <details>
         <summary class="blk-t">OOC <small>RP에서 값 뽑아오기</small></summary>
-        <div class="ooc" id="oocBox">*[OOC: 잠시 RP 중지. 지금까지의 서사와 두 사람의 관계를 근거로 파트너 기록지를 작성한다. 아래 항목만 출력하고 다른 말은 붙이지 않는다.
+        <div class="ooc" id="oocBox">*[OOC: 잠시 RP 중지. 지금까지의 서사와 두 사람의 관계를 근거로 파트너 기록지를 작성한다. 아래 형식을 그대로 지켜 값만 채우고 다른 말은 붙이지 않는다.
 
-· 코드네임 A / 직급 A
-· 코드네임 B / 직급 B
-· 동조율 __% (0~100 정수)
-· 편성 구분
-· 기록 항목
-· 비고 (120자 이내)
-· 인장 문구
+코드네임 A:
+직급 A:
+코드네임 B:
+직급 B:
+동조율:
+편성 구분:
+기록 항목:
+비고:
+인장 문구:
 
-직급 — EXECUTOR PX-00 / ENFORCER PX-01 / RANGER PX-02 / RUNNER PX-03 / ROOKIE PX-04 / STABILIZER VX-01 중 택1
-편성 구분 — 전속 편성 / 임시 편성 / 합동 작전 / 비공식 중 택1
-기록 항목 — 합동 임무 이력 / 마력 공유 가능 / 동조 실패 이력 / 원거리 동조 / 상시 대기 편성 / 재심사 필요 중 해당하는 것만 나열
-인장 문구 — 영문·숫자 10자 이내
-동조율과 비고는 반드시 서사 속 행동·대사를 근거로 산출한다.
-
-출력은 div·span과 인라인 스타일만 쓴 HTML로 하고 전체를 백틱으로 감싼다. 바탕 #fcfbf8, 본문 #16181d, 라벨 #9b9a94, 괘선 #dedbd3의 종이 서식처럼 구성한다. 라벨은 작게 자간을 넓혀 쓰고 값은 굵게 대비를 준다. 동조율은 20칸 세그먼트 게이지로 표현하며 채운 칸은 #1d4ed8, 빈 칸은 #f4f2ec로 한다.]*</div>
+· 순수 텍스트로만 출력한다. HTML·표·코드블록·마크다운 강조 금지
+· 항목명은 그대로 두고 값만 채운다. 생략하지 않는다
+· 한 항목은 반드시 한 줄로 쓴다
+· 코드네임 — 14자 이내
+· 직급 — EXECUTOR PX-00 / ENFORCER PX-01 / RANGER PX-02 / RUNNER PX-03 / ROOKIE PX-04 / STABILIZER VX-01 중 택1, 영문명과 코드를 함께 쓴다
+· 동조율 — 0~100 정수에 % 를 붙인다
+· 편성 구분 — 전속 편성 / 임시 편성 / 합동 작전 / 비공식 중 택1
+· 기록 항목 — 합동 임무 이력 / 마력 공유 가능 / 동조 실패 이력 / 원거리 동조 / 상시 대기 편성 / 재심사 필요 중 해당하는 것만 쉼표로 나열
+· 비고 — 120자 이내 한 줄
+· 인장 문구 — 영문·숫자 10자 이내
+· 동조율과 비고는 반드시 서사 속 행동·대사를 근거로 산출한다.]*</div>
       </details>
       <button class="btn s" id="oocCopy" type="button" style="margin-top:11px">OOC 프롬프트 복사</button>
 
@@ -744,13 +750,14 @@ function rankOf(str){
 }
 function clean(v,max){
   let s=String(v||'')
-    .replace(/^[\s·•\-–—*>|]+/,'')
-    .replace(/^(코드네임|직급|이름|비고|인장\s*문구|인장|편성\s*구분|편성|기록\s*항목|기록|동조율)\s*[AB]?\s*[:：\-–—]?\s*/i,'')
-    .replace(/^[AB]\s*[:：\-–—]\s*/,'')
+    .replace(/[*`~]/g,'')
+    .replace(/^[\s·•▪◦‧∙\-–—>|:：=]+/,'')
+    .replace(/^(코드네임|CODE\s*NAME|직급|RANK|이름|비고|NOTE|인장\s*문구|인장|SEAL|편성\s*구분|편성|TYPE|기록\s*항목|기록|동조율)\s*[AB]?\s*[:：\-–—]?\s*/i,'')
+    .replace(/^[AB]\s*[:：\-–—/]\s*/,'')
     .replace(/[「」『』“”‘’"']/g,'')
-    .replace(/[\s,·|]+$/,'').trim();
-  if(LBL.test(s)&&s.length<=6)s='';
-  if(/^_+$/.test(s))s='';
+    .replace(/[\s,·|:：\-–—\]\)}>]+$/,'').trim();
+  if(/^(코드네임|직급|비고|인장|편성|기록|동조율|미상|없음|해당\s*없음|N\/?A|-{1,3})$/i.test(s))s='';
+  if(/^[_\s]+$/.test(s))s='';
   return max?s.slice(0,max):s;
 }
 /* 라벨이 있는 줄의 값 (없으면 다음 줄) */
@@ -768,41 +775,52 @@ function grab(lines,re){
   return '';
 }
 
+const RANK_TOK=/(EXECUTOR|ENFORCER|RANGER|RUNNER|ROOKIE|STABILIZER)|[PV]X\s*-?\s*\d{2}/ig;
+
 function parseRecord(raw){
-  const text=toText(raw);
+  const text=toText(raw).replace(/[*`]/g,'');
   const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
   const flat=text.replace(/\s/g,'');
   const out={names:[null,null],ranks:[null,null],sync:null,type:null,recs:null,note:null,seal:null,org:null};
 
   /* 1) A / B 라벨 우선 */
   ['A','B'].forEach((t,i)=>{
-    const n=clean(grab(lines,new RegExp('코드네임\\s*'+t+'(?![A-Z])','i')),14);
+    const n=clean(grab(lines,new RegExp('(코드네임|이름|CODE\\s*NAME)\\s*[·\\-]?\\s*'+t+'(?![A-Z])','i')),14);
     if(n)out.names[i]=n;
-    const r=rankOf(grab(lines,new RegExp('직급\\s*'+t+'(?![A-Z])','i')));
+    const r=rankOf(grab(lines,new RegExp('(직급|RANK)\\s*[·\\-]?\\s*'+t+'(?![A-Z])','i')));
     if(r>=0)out.ranks[i]=r;
   });
 
-  /* 2) "코드네임 / 직급" 형태의 줄에서 순서대로 수집 */
+  /* 2) 직급이 들어간 줄에서 순서대로 (구분자 무관) */
   const pn=[],pr=[];
+  const push=v=>{if(v&&pn.indexOf(v)<0)pn.push(v);};
   lines.forEach(ln=>{
-    if(!RANK_HINT.test(ln))return;
     const ri=rankOf(ln);if(ri<0)return;
-    const cut=ln.split(/[\/|｜]/);
-    if(cut.length>1&&rankOf(cut[cut.length-1])>=0){
-      const nm=clean(cut.slice(0,-1).join('/'),14);
-      if(nm)pn.push(nm);
-    }
     pr.push(ri);
+    const cut=ln.split(/[\/|｜]/);
+    if(cut.length>1&&rankOf(cut[cut.length-1])>=0&&rankOf(cut[0])<0){
+      push(clean(cut.slice(0,-1).join('/'),14));
+    }else{
+      /* 슬래시가 없으면 직급 표기를 지운 나머지를 이름 후보로 */
+      push(clean(ln.replace(RANK_TOK,' ').replace(/(직급|RANK|코드네임|CODE\s*NAME)\s*[AB]?/ig,' ')
+        .replace(/\s{2,}/g,' '),14));
+    }
   });
-  /* 3) 그래도 비면 코드네임 라벨을 순서대로 */
-  if(pn.length<2){
-    lines.forEach((ln,i)=>{
-      const m=ln.match(/코드네임\s*[AB]?/i);if(!m)return;
-      let v=clean(ln.slice(m.index+m[0].length),14);
-      if(!v){const nx=lines[i+1]?clean(lines[i+1],14):'';if(nx&&!LBL.test(nx))v=nx;}
-      if(v&&pn.indexOf(v)<0)pn.push(v);
-    });
-  }
+
+  /* 3) 코드네임 라벨을 순서대로 */
+  lines.forEach((ln,i)=>{
+    const m=ln.match(/(코드네임|CODE\s*NAME|파트너|PARTNER)\s*[·\-]?\s*[AB]?/i);if(!m)return;
+    let v=clean(ln.slice(m.index+m[0].length),14);
+    if(!v){
+      for(let j=i+1;j<Math.min(lines.length,i+3);j++){
+        const nx=clean(lines[j],14);
+        if(nx&&!LBL.test(nx)&&rankOf(nx)<0){v=nx;break;}
+        if(lines[j].trim())break;
+      }
+    }
+    push(v);
+  });
+
   for(let i=0,a=0,b=0;i<2;i++){
     if(out.names[i]==null&&pn[a]!==undefined)out.names[i]=pn[a++];else if(out.names[i]!=null)a++;
     if(out.ranks[i]==null&&pr[b]!==undefined)out.ranks[i]=pr[b++];else if(out.ranks[i]!=null)b++;
