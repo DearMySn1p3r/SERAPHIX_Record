@@ -151,12 +151,12 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
 · 순수 텍스트로만 출력한다. HTML·표·코드블록·마크다운 강조 금지
 · 항목명은 그대로 두고 값만 채운다. 생략하지 않는다
 · 한 항목은 반드시 한 줄로 쓴다
-· 코드네임 — 영문으로 짓는다. 14자 이내
+· 코드네임 — 서사에서 이미 쓰이고 있는 두 사람의 코드네임을 그대로 가져온다. 새로 짓지 않는다. 한글 코드네임이면 로마자로 옮겨 영문 대문자로 출력한다. 18자 이내
 · 직급 — EXECUTOR PX-00 / ENFORCER PX-01 / RANGER PX-02 / RUNNER PX-03 / ROOKIE PX-04 / STABILIZER VX-01 중 택1, 영문명과 코드를 함께 쓴다
 · 동조율 — 0~100 정수에 % 를 붙인다
 · 편성 구분 — 전속 편성 / 임시 편성 / 합동 작전 / 비공식 중 택1
 · 기록 항목 — 합동 임무 이력 / 마력 공유 가능 / 동조 실패 이력 / 원거리 동조 / 상시 대기 편성 / 재심사 필요 중 해당하는 것만 쉼표로 나열
-· 비고 — 150~240자. 줄바꿈 없이 한 줄로 쓴다. 두 사람 사이에 실제로 있었던 장면을 근거로, 동조율이 그 수치인 이유와 편성 판단의 근거를 기록관의 건조한 문체로 서술한다
+· 비고 — 280~380자. 줄바꿈 없이 한 줄로 쓴다. 두 사람 사이에 실제로 있었던 장면을 근거로, 동조율이 그 수치인 이유와 편성 판단의 근거를 기록관의 건조한 문체로 서술한다
 · 인장 문구 — 영문·숫자 10자 이내
 · 동조율과 비고는 반드시 서사 속 행동·대사를 근거로 산출한다.]*</div>
       </details>
@@ -181,7 +181,7 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
     <div class="blk">
       <h2 class="blk-t"><span>Partner <span class="tag">A</span></span></h2>
       <div class="gr">
-        <div class="f"><label for="nameA">코드네임</label><input type="text" id="nameA" maxlength="14" placeholder="CODENAME" autocomplete="off"></div>
+        <div class="f"><label for="nameA">코드네임</label><input type="text" id="nameA" maxlength="18" placeholder="CODENAME" autocomplete="off"></div>
         <div class="f"><label for="rankA">직급</label><select id="rankA"></select></div>
       </div>
       <div class="drop" id="dropA" style="margin-top:11px"><b>사진 A 업로드</b><small>클릭 · 드래그 · 붙여넣기</small></div>
@@ -192,7 +192,7 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
     <div class="blk">
       <h2 class="blk-t"><span>Partner <span class="tag">B</span></span></h2>
       <div class="gr">
-        <div class="f"><label for="nameB">코드네임</label><input type="text" id="nameB" maxlength="14" placeholder="CODENAME" autocomplete="off"></div>
+        <div class="f"><label for="nameB">코드네임</label><input type="text" id="nameB" maxlength="18" placeholder="CODENAME" autocomplete="off"></div>
         <div class="f"><label for="rankB">직급</label><select id="rankB"></select></div>
       </div>
       <div class="drop" id="dropB" style="margin-top:11px"><b>사진 B 업로드</b><small>클릭 · 드래그 · 붙여넣기</small></div>
@@ -215,7 +215,7 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
       <h2 class="blk-t">Record <small>중복 선택</small></h2>
       <div class="chips" id="recChips"></div>
       <div class="f wide" style="margin-top:12px"><label for="note">비고<span class="cnt" id="nCnt"></span></label>
-        <textarea id="note" rows="5" maxlength="240" autocomplete="off"></textarea></div>
+        <textarea id="note" rows="5" maxlength="400" autocomplete="off"></textarea></div>
     </div>
 
     <div class="blk">
@@ -294,7 +294,7 @@ const grade=v=>v>=90?0:v>=75?1:v>=55?2:v>=35?3:4;
 /* 사진칸 (3:4) */
 const BOX=[{x:12,y:50.4,w:22,h:29.3},{x:78,y:50.4,w:22,h:29.3}];
 
-const NOTE_MAX=240;
+const NOTE_MAX=400,NAME_MAX=18;
 const P={paper:'#fcfbf8',ink:'#16181d',inkM:'#5c5f68',inkL:'#9b9a94',rule:'#dedbd3',box:'#f4f2ec'};
 
 const S={
@@ -470,12 +470,15 @@ function drawForm(c){
   });
 
   /* ── 비고 ── */
-  T(c,'비고',L,151.6,{size:1.5,weight:700,color:P.inkL,sp:.4});
-  const nl=wrap(c,S.note,R-L-1.2,2.25,600).slice(0,6);
-  for(let i=0;i<6;i++){
-    const y=156.8+i*5.0;
+  T(c,'비고',L,149.8,{size:1.5,weight:700,color:P.inkL,sp:.4});
+  const NLN=8,ny0=154.2,nlh=4.4,nw=R-L-1.2;
+  let ns=2.3,nl=wrap(c,S.note,nw,ns,600);
+  while(nl.length>NLN&&ns>1.66){ns-=.12;nl=wrap(c,S.note,nw,ns,600);}
+  nl=nl.slice(0,NLN);
+  for(let i=0;i<NLN;i++){
+    const y=ny0+i*nlh;
     line(c,L,y,R,P.rule,.18);
-    if(nl[i])T(c,nl[i],L+.8,y-1.3,{size:2.25,weight:600,color:P.ink,sp:0});
+    if(nl[i])T(c,nl[i],L+.8,y-1.15,{size:ns,weight:600,color:P.ink,sp:0});
   }
   line(c,L,186.4,R,P.rule,.25);
 
@@ -786,7 +789,7 @@ function parseRecord(raw){
 
   /* 1) A / B 라벨 우선 */
   ['A','B'].forEach((t,i)=>{
-    const n=clean(grab(lines,new RegExp('(코드네임|이름|CODE\\s*NAME)\\s*[·\\-]?\\s*'+t+'(?![A-Z])','i')),14);
+    const n=clean(grab(lines,new RegExp('(코드네임|이름|CODE\\s*NAME)\\s*[·\\-]?\\s*'+t+'(?![A-Z])','i')),NAME_MAX);
     if(n)out.names[i]=n;
     const r=rankOf(grab(lines,new RegExp('(직급|RANK)\\s*[·\\-]?\\s*'+t+'(?![A-Z])','i')));
     if(r>=0)out.ranks[i]=r;
@@ -800,21 +803,21 @@ function parseRecord(raw){
     pr.push(ri);
     const cut=ln.split(/[\/|｜]/);
     if(cut.length>1&&rankOf(cut[cut.length-1])>=0&&rankOf(cut[0])<0){
-      push(clean(cut.slice(0,-1).join('/'),14));
+      push(clean(cut.slice(0,-1).join('/'),NAME_MAX));
     }else{
       /* 슬래시가 없으면 직급 표기를 지운 나머지를 이름 후보로 */
       push(clean(ln.replace(RANK_TOK,' ').replace(/(직급|RANK|코드네임|CODE\s*NAME)\s*[AB]?/ig,' ')
-        .replace(/\s{2,}/g,' '),14));
+        .replace(/\s{2,}/g,' '),NAME_MAX));
     }
   });
 
   /* 3) 코드네임 라벨을 순서대로 */
   lines.forEach((ln,i)=>{
     const m=ln.match(/(코드네임|CODE\s*NAME|파트너|PARTNER)\s*[·\-]?\s*[AB]?/i);if(!m)return;
-    let v=clean(ln.slice(m.index+m[0].length),14);
+    let v=clean(ln.slice(m.index+m[0].length),NAME_MAX);
     if(!v){
       for(let j=i+1;j<Math.min(lines.length,i+3);j++){
-        const nx=clean(lines[j],14);
+        const nx=clean(lines[j],NAME_MAX);
         if(nx&&!LBL.test(nx)&&rankOf(nx)<0){v=nx;break;}
         if(lines[j].trim())break;
       }
