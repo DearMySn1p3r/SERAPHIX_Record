@@ -151,12 +151,12 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
 · 순수 텍스트로만 출력한다. HTML·표·코드블록·마크다운 강조 금지
 · 항목명은 그대로 두고 값만 채운다. 생략하지 않는다
 · 한 항목은 반드시 한 줄로 쓴다
-· 코드네임 — 14자 이내
+· 코드네임 — 영문으로 짓는다. 14자 이내
 · 직급 — EXECUTOR PX-00 / ENFORCER PX-01 / RANGER PX-02 / RUNNER PX-03 / ROOKIE PX-04 / STABILIZER VX-01 중 택1, 영문명과 코드를 함께 쓴다
 · 동조율 — 0~100 정수에 % 를 붙인다
 · 편성 구분 — 전속 편성 / 임시 편성 / 합동 작전 / 비공식 중 택1
 · 기록 항목 — 합동 임무 이력 / 마력 공유 가능 / 동조 실패 이력 / 원거리 동조 / 상시 대기 편성 / 재심사 필요 중 해당하는 것만 쉼표로 나열
-· 비고 — 120자 이내 한 줄
+· 비고 — 150~240자. 줄바꿈 없이 한 줄로 쓴다. 두 사람 사이에 실제로 있었던 장면을 근거로, 동조율이 그 수치인 이유와 편성 판단의 근거를 기록관의 건조한 문체로 서술한다
 · 인장 문구 — 영문·숫자 10자 이내
 · 동조율과 비고는 반드시 서사 속 행동·대사를 근거로 산출한다.]*</div>
       </details>
@@ -215,7 +215,7 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
       <h2 class="blk-t">Record <small>중복 선택</small></h2>
       <div class="chips" id="recChips"></div>
       <div class="f wide" style="margin-top:12px"><label for="note">비고<span class="cnt" id="nCnt"></span></label>
-        <textarea id="note" rows="3" maxlength="120" autocomplete="off"></textarea></div>
+        <textarea id="note" rows="5" maxlength="240" autocomplete="off"></textarea></div>
     </div>
 
     <div class="blk">
@@ -294,6 +294,7 @@ const grade=v=>v>=90?0:v>=75?1:v>=55?2:v>=35?3:4;
 /* 사진칸 (3:4) */
 const BOX=[{x:12,y:50.4,w:22,h:29.3},{x:78,y:50.4,w:22,h:29.3}];
 
+const NOTE_MAX=240;
 const P={paper:'#fcfbf8',ink:'#16181d',inkM:'#5c5f68',inkL:'#9b9a94',rule:'#dedbd3',box:'#f4f2ec'};
 
 const S={
@@ -469,12 +470,12 @@ function drawForm(c){
   });
 
   /* ── 비고 ── */
-  T(c,'비고',L,157.0,{size:1.5,weight:700,color:P.inkL,sp:.4});
-  const nl=wrap(c,S.note,R-L-1.2,2.3,600).slice(0,4);
-  for(let i=0;i<4;i++){
-    const y=162.4+i*6.0;
+  T(c,'비고',L,151.6,{size:1.5,weight:700,color:P.inkL,sp:.4});
+  const nl=wrap(c,S.note,R-L-1.2,2.25,600).slice(0,6);
+  for(let i=0;i<6;i++){
+    const y=156.8+i*5.0;
     line(c,L,y,R,P.rule,.18);
-    if(nl[i])T(c,nl[i],L+.8,y-1.4,{size:2.3,weight:600,color:P.ink,sp:0});
+    if(nl[i])T(c,nl[i],L+.8,y-1.3,{size:2.25,weight:600,color:P.ink,sp:0});
   }
   line(c,L,186.4,R,P.rule,.25);
 
@@ -658,7 +659,7 @@ FIELDS.forEach(id=>{
   }));
 });
 $('note').addEventListener('keydown',e=>{if(e.key==='Enter')e.preventDefault();});
-function counts(){$('nCnt').textContent=($('note').value||'').length+' / 120';}
+function counts(){$('nCnt').textContent=($('note').value||'').length+' / '+NOTE_MAX;}
 $('sync').oninput=e=>{
   S.sync=+e.target.value;$('syncV').textContent=e.target.value+' %';
   fill(e.target);gradeUI();draw();
@@ -847,7 +848,19 @@ function parseRecord(raw){
   if(rs.length)out.recs=rs;
 
   /* 비고 · 인장 · 기관 */
-  const nt=clean(grab(lines,/비고|NOTE|REMARK/i),120);
+  /* 비고 — 여러 줄로 쪼개져 와도 다음 항목 전까지 이어붙임 */
+  let nt='';
+  for(let i=0;i<lines.length&&!nt;i++){
+    const m=lines[i].match(/비고|NOTE|REMARK/i);if(!m)continue;
+    let v=clean(lines[i].slice(m.index+m[0].length));
+    for(let j=i+1;j<lines.length&&v.length<NOTE_MAX;j++){
+      const nx=lines[j].replace(/^[·•▪◦‧∙\-–—>|\s]+/,'').trim();
+      if(!nx||LBL.test(nx)||rankOf(nx)>=0)break;
+      const add=clean(nx);if(!add)break;
+      v=(v?v+' ':'')+add;
+    }
+    nt=v.slice(0,NOTE_MAX);
+  }
   if(nt)out.note=nt.replace(/[\r\n\t]+/g,' ');
   const sl=clean(grab(lines,/인장(\s*문구)?|SEAL/i),10);
   if(sl)out.seal=sl;
