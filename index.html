@@ -67,6 +67,17 @@ select{padding:9px 28px 9px 11px;appearance:none;cursor:pointer;
 .blk details[open] summary::after{content:"▴"}
 .ooc{margin-top:12px;max-height:190px;overflow:auto;background:#fbfbfc;border:1px solid var(--line);border-radius:8px;
   padding:11px 12px;font:500 11px/1.7 var(--sans);color:var(--ink2);white-space:pre-wrap;word-break:break-word;-webkit-user-select:all;user-select:all}
+.af{margin-top:13px;padding-top:13px;border-top:1px solid var(--line2)}
+.af-l{display:block;margin-bottom:5px;font-size:10.5px;font-weight:600;color:var(--ink2)}
+.af-l small{font-weight:500;color:var(--ink3)}
+.af-row{display:flex;gap:7px;margin-top:8px}
+.af-row .btn{flex:1;width:auto}
+.af-row .xbtn{flex:0 0 auto;padding:0 13px}
+.af-msg{margin:9px 0 0;font-size:10.5px;line-height:1.65;color:var(--ink3);word-break:keep-all}
+.af-msg:empty{display:none}
+.af-msg.ok{color:var(--ac)}
+.af-msg.no{color:#b91c1c}
+.af-msg b{font-weight:700}
 .chips{display:flex;flex-wrap:wrap;gap:5px}
 .chip{border:1px solid var(--line);background:#fff;border-radius:6px;padding:6px 9px;font:600 11px var(--sans);color:var(--ink3);cursor:pointer;transition:.15s}
 .chip:hover{border-color:var(--ac);color:var(--ac)}
@@ -144,6 +155,16 @@ kbd{font-family:var(--mono);font-size:9px;background:#fff;border:1px solid var(-
 출력은 div·span과 인라인 스타일만 쓴 HTML로 하고 전체를 백틱으로 감싼다. 바탕 #fcfbf8, 본문 #16181d, 라벨 #9b9a94, 괘선 #dedbd3의 종이 서식처럼 구성한다. 라벨은 작게 자간을 넓혀 쓰고 값은 굵게 대비를 준다. 동조율은 20칸 세그먼트 게이지로 표현하며 채운 칸은 #1d4ed8, 빈 칸은 #f4f2ec로 한다.]*</div>
       </details>
       <button class="btn s" id="oocCopy" type="button" style="margin-top:11px">OOC 프롬프트 복사</button>
+
+      <div class="af">
+        <label class="af-l" for="afIn">응답 붙여넣기 <small>· 텍스트 · HTML 모두 인식</small></label>
+        <textarea id="afIn" rows="4" placeholder="AI가 출력한 기록지 내용을 그대로 붙여넣으세요" autocomplete="off" spellcheck="false"></textarea>
+        <div class="af-row">
+          <button class="btn p" id="afRun" type="button">자동 채우기</button>
+          <button class="xbtn" id="afClr" type="button">지우기</button>
+        </div>
+        <p class="af-msg" id="afMsg"></p>
+      </div>
     </div>
 
     <div class="blk">
@@ -694,6 +715,178 @@ $('dpi').onchange=()=>{
   const k=(+$('dpi').value)/25.4;
   $('sp2').textContent='PNG '+Math.round(PW*k)+' × '+Math.round(PH*k)+' px';
 };
+
+/* ══════════ 자동 채우기 ══════════ */
+const LBL=/^(코드네임|직급|동조율|편성|구분|기록|항목|비고|인장|문서|발급|기관|파트너|이름|PARTNER|SYNC|TYPE|RECORD|NOTE|SEAL|CODENAME)/i;
+const RANK_HINT=/(EXECUTOR|ENFORCER|RANGER|RUNNER|ROOKIE|STABILIZER|[PV]X\s*-?\s*\d{2})/i;
+
+/* HTML·백틱 응답을 줄 단위 평문으로 */
+function toText(src){
+  let s=String(src||'').replace(/```+/g,'\n');
+  if(/<[a-z!\/][^>]*>/i.test(s)){
+    try{
+      const doc=new DOMParser().parseFromString(s,'text/html');
+      doc.querySelectorAll('script,style,template,noscript').forEach(n=>n.remove());
+      doc.querySelectorAll('br,div,p,li,tr,td,th,span,label,section,h1,h2,h3,h4,h5,h6').forEach(n=>{
+        try{n.after('\n');}catch(e){}
+      });
+      s=doc.body.textContent||'';
+    }catch(e){ s=s.replace(/<[^>]+>/g,'\n'); }
+  }
+  return s.replace(/\u00a0/g,' ').replace(/[\t ]+/g,' ');
+}
+function rankOf(str){
+  const s=String(str||'').toUpperCase().replace(/[\s·]/g,'');
+  const flat=s.replace(/-/g,'');
+  for(let i=0;i<RANKS.length;i++) if(flat.includes(RANKS[i].code.replace('-','')))return i;
+  for(let i=0;i<RANKS.length;i++) if(s.includes(RANKS[i].en))return i;
+  return -1;
+}
+function clean(v,max){
+  let s=String(v||'')
+    .replace(/^[\s·•\-–—*>|]+/,'')
+    .replace(/^(코드네임|직급|이름|비고|인장\s*문구|인장|편성\s*구분|편성|기록\s*항목|기록|동조율)\s*[AB]?\s*[:：\-–—]?\s*/i,'')
+    .replace(/^[AB]\s*[:：\-–—]\s*/,'')
+    .replace(/[「」『』“”‘’"']/g,'')
+    .replace(/[\s,·|]+$/,'').trim();
+  if(LBL.test(s)&&s.length<=6)s='';
+  if(/^_+$/.test(s))s='';
+  return max?s.slice(0,max):s;
+}
+/* 라벨이 있는 줄의 값 (없으면 다음 줄) */
+function grab(lines,re){
+  for(let i=0;i<lines.length;i++){
+    const m=lines[i].match(re);if(!m)continue;
+    const rest=lines[i].slice(m.index+m[0].length).replace(/^\s*[:：=\-–—·|]+\s*/,'').trim();
+    if(rest&&!/^[_\s]*$/.test(rest))return rest;
+    for(let j=i+1;j<Math.min(lines.length,i+3);j++){
+      const nx=lines[j].replace(/^[·•\-–—*\s]+/,'').trim();
+      if(!nx)continue;
+      return LBL.test(nx)?'':nx;
+    }
+  }
+  return '';
+}
+
+function parseRecord(raw){
+  const text=toText(raw);
+  const lines=text.split(/\r?\n/).map(s=>s.trim()).filter(Boolean);
+  const flat=text.replace(/\s/g,'');
+  const out={names:[null,null],ranks:[null,null],sync:null,type:null,recs:null,note:null,seal:null,org:null};
+
+  /* 1) A / B 라벨 우선 */
+  ['A','B'].forEach((t,i)=>{
+    const n=clean(grab(lines,new RegExp('코드네임\\s*'+t+'(?![A-Z])','i')),14);
+    if(n)out.names[i]=n;
+    const r=rankOf(grab(lines,new RegExp('직급\\s*'+t+'(?![A-Z])','i')));
+    if(r>=0)out.ranks[i]=r;
+  });
+
+  /* 2) "코드네임 / 직급" 형태의 줄에서 순서대로 수집 */
+  const pn=[],pr=[];
+  lines.forEach(ln=>{
+    if(!RANK_HINT.test(ln))return;
+    const ri=rankOf(ln);if(ri<0)return;
+    const cut=ln.split(/[\/|｜]/);
+    if(cut.length>1&&rankOf(cut[cut.length-1])>=0){
+      const nm=clean(cut.slice(0,-1).join('/'),14);
+      if(nm)pn.push(nm);
+    }
+    pr.push(ri);
+  });
+  /* 3) 그래도 비면 코드네임 라벨을 순서대로 */
+  if(pn.length<2){
+    lines.forEach((ln,i)=>{
+      const m=ln.match(/코드네임\s*[AB]?/i);if(!m)return;
+      let v=clean(ln.slice(m.index+m[0].length),14);
+      if(!v){const nx=lines[i+1]?clean(lines[i+1],14):'';if(nx&&!LBL.test(nx))v=nx;}
+      if(v&&pn.indexOf(v)<0)pn.push(v);
+    });
+  }
+  for(let i=0,a=0,b=0;i<2;i++){
+    if(out.names[i]==null&&pn[a]!==undefined)out.names[i]=pn[a++];else if(out.names[i]!=null)a++;
+    if(out.ranks[i]==null&&pr[b]!==undefined)out.ranks[i]=pr[b++];else if(out.ranks[i]!=null)b++;
+  }
+
+  /* 동조율 — 자리표시자·괄호 안 범위(0~100)는 건너뜀 */
+  let sv=null;
+  for(let i=0;i<lines.length&&sv===null;i++){
+    const m=lines[i].match(/동조율|SYNC(\s*RATE)?/i);if(!m)continue;
+    for(let j=i;j<Math.min(lines.length,i+2)&&sv===null;j++){
+      const seg=(j===i?lines[j].slice(m.index+m[0].length):lines[j]).replace(/\([^)]*\)/g,' ');
+      const d=seg.match(/(\d{1,3})/);
+      if(d&&+d[1]<=100)sv=+d[1];
+    }
+  }
+  if(sv===null){const g=text.replace(/\([^)]*\)/g,' ').match(/(\d{1,3})\s*%/);if(g&&+g[1]<=100)sv=+g[1];}
+  if(sv!==null)out.sync=sv;
+
+  /* 편성 구분 · 기록 항목 */
+  let best=Infinity;
+  TYPES.forEach((t,i)=>{const p=flat.indexOf(t.replace(/\s/g,''));if(p>=0&&p<best){best=p;out.type=i;}});
+  const rs=[];
+  RECS.forEach((r,i)=>{if(flat.indexOf(r.replace(/\s/g,''))>=0)rs.push(i);});
+  if(rs.length)out.recs=rs;
+
+  /* 비고 · 인장 · 기관 */
+  const nt=clean(grab(lines,/비고|NOTE|REMARK/i),120);
+  if(nt)out.note=nt.replace(/[\r\n\t]+/g,' ');
+  const sl=clean(grab(lines,/인장(\s*문구)?|SEAL/i),10);
+  if(sl)out.seal=sl;
+  const og=grab(lines,/(발급\s*)?기관|ISSUER/i).toUpperCase();
+  if(og)ORGS.forEach((o,i)=>{if(og.indexOf(o.en)>=0||og.indexOf(o.ko)>=0)out.org=i;});
+  return out;
+}
+
+function autoFill(){
+  const msg=$('afMsg'),raw=$('afIn').value;
+  if(!raw.trim()){msg.className='af-msg no';msg.textContent='붙여넣은 내용이 없습니다.';return;}
+  const r=parseRecord(raw),done=[],miss=[];
+  const mark=(ok,label)=>{(ok?done:miss).push(label);};
+
+  ['A','B'].forEach((t,i)=>{
+    const nm=r.names[i];
+    if(nm){S['name'+t]=nm;$('name'+t).value=nm;}
+    mark(!!nm,'코드네임 '+t);
+    const rk=r.ranks[i];
+    if(rk!=null){S['rank'+t]=rk;$('rank'+t).value=rk;}
+    mark(rk!=null,'직급 '+t);
+  });
+  if(r.sync!=null){
+    S.sync=r.sync;$('sync').value=r.sync;$('syncV').textContent=r.sync+' %';
+    fill($('sync'));gradeUI();
+  }
+  mark(r.sync!=null,'동조율');
+  if(r.type!=null){S.type=r.type;markType();}
+  mark(r.type!=null,'편성 구분');
+  if(r.recs){S.recs=r.recs.slice();markRec();}
+  mark(!!r.recs,'기록 항목');
+  if(r.note!=null){S.note=r.note;$('note').value=r.note;counts();}
+  mark(r.note!=null,'비고');
+  if(r.seal){S.seal=r.seal;$('seal').value=r.seal;}
+  mark(!!r.seal,'인장 문구');
+  if(r.org!=null&&r.org!==S.org){
+    S.org=r.org;
+    const rb=$('orgs').querySelectorAll('input')[r.org];if(rb)rb.checked=true;
+    if(!S.docCustom)newId();
+    done.push('발급 기관');
+  }
+  draw();
+
+  if(!done.length){
+    msg.className='af-msg no';
+    msg.textContent='읽을 수 있는 항목이 없습니다. OOC 프롬프트로 받은 응답을 그대로 붙여넣어 주세요.';
+  }else{
+    msg.className='af-msg ok';
+    msg.innerHTML='<b>'+done.length+'개 항목을 채웠습니다</b> · '+done.join(', ')+
+      (miss.length?'<br><span style="color:var(--ink3)">못 찾은 항목 — '+miss.join(', ')+' (직접 입력해 주세요)</span>':'');
+  }
+}
+$('afRun').onclick=autoFill;
+$('afClr').onclick=()=>{$('afIn').value='';const m=$('afMsg');m.textContent='';m.className='af-msg';$('afIn').focus();};
+$('afIn').addEventListener('keydown',e=>{
+  if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){e.preventDefault();autoFill();}
+});
 
 newId();accentCSS();markSwatch();markType();markRec();counts();gradeUI();$('dpi').onchange();
 window.addEventListener('resize',sizePv);sizePv();
